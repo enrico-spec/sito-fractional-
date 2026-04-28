@@ -459,6 +459,105 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .clients-grid { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 0.5rem; }
   }
 
+  /* ── HAMBURGER BUTTON ────────────────────────────────────────── */
+  .nav-hamburger {
+    display: none; flex-direction: column; gap: 5px; cursor: pointer;
+    background: none; border: none; padding: 6px; z-index: 101; flex-shrink: 0;
+  }
+  .nav-hamburger span {
+    display: block; width: 22px; height: 2px; background: var(--navy);
+    border-radius: 2px; transition: transform 0.3s ease, opacity 0.2s ease;
+    transform-origin: center;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ── MOBILE DRAWER ───────────────────────────────────────────── */
+  .nav-mobile-drawer {
+    display: none; position: fixed; inset: 0; top: 64px;
+    background: rgba(249,248,245,0.97); backdrop-filter: blur(16px);
+    z-index: 98; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2rem; opacity: 0; transform: translateY(-6px);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    pointer-events: none;
+  }
+  .nav-mobile-drawer.open { opacity: 1; transform: translateY(0); pointer-events: all; }
+  .nav-mobile-drawer a {
+    font-family: var(--serif); font-size: 1.5rem; font-weight: 700;
+    color: var(--navy); text-decoration: none; transition: color 0.2s;
+  }
+  .nav-mobile-drawer a:hover, .nav-mobile-drawer a:active { color: var(--logo); }
+  .nav-mobile-drawer .drawer-cta {
+    background: var(--cta); color: white !important;
+    padding: 0.8rem 2.5rem; border-radius: 100px;
+    font-size: 1.1rem; transition: background 0.2s;
+  }
+  .nav-mobile-drawer .drawer-cta:hover { background: var(--cta-hov); color: white !important; }
+  .nav-mobile-drawer .drawer-lang {
+    display: flex; gap: 0.5rem; margin-top: 0.5rem;
+  }
+  .body-lock { overflow: hidden; }
+
+  /* ── HERO STATS — mobile version ─────────────────────────────── */
+  .hero-stats-mobile {
+    display: none;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem; margin-top: 2rem;
+    padding: 1.1rem 1.25rem;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px; backdrop-filter: blur(4px);
+  }
+
+  /* ── RESPONSIVE (overrides) ──────────────────────────────────── */
+  @media (max-width: 900px) {
+    .nav-hamburger { display: flex; }
+    .nav-mobile-drawer { display: flex; }
+    .lang-switch { display: none; } /* moved inside drawer */
+  }
+
+  @media (max-width: 900px) {
+    .hero-stats-mobile { display: grid; }
+  }
+
+  @media (max-width: 600px) {
+    section { padding: 3.5rem 0; }
+    .hero-content { padding: 4rem 1.5rem 2.5rem; }
+    .hero h1 { font-size: clamp(1.85rem, 7vw, 2.6rem); }
+    .hero-sub { font-size: 0.95rem; margin-bottom: 1.75rem; }
+    .hero-actions { flex-direction: column; gap: 0.75rem; }
+    .hero-actions .btn-primary,
+    .hero-actions .btn-ghost { text-align: center; }
+    .section-title { font-size: clamp(1.55rem, 6vw, 2.1rem); }
+    .results-grid { grid-template-columns: repeat(2, 1fr); gap: 0.85rem; }
+    .result-num { font-size: 2rem; }
+    .container { padding: 0 1.25rem; }
+    .hero-stats-mobile { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; padding: 1rem; }
+    .hero-stat-num { font-size: 1.4rem; }
+    .hero-stat-label { font-size: 0.65rem; }
+
+    /* Reduce orb sizes so they don't bleed off small screens */
+    .orb-1 { width: 260px; height: 260px; }
+    .orb-2 { width: 160px; height: 160px; }
+    .orb-3 { display: none; }
+
+    /* Larger tap targets */
+    .btn-primary, .btn-ghost, .btn-cta-inv, .btn-ghost-dark {
+      padding: 0.85rem 1.75rem; min-height: 48px;
+    }
+    .skill-pill { padding: 0.5rem 1rem; min-height: 40px; }
+    .filter-btn { min-height: 40px; }
+    .back-top { bottom: 1.25rem; right: 1.25rem; }
+
+    /* Case study stacked */
+    .case-kpi-val { font-size: 1.1rem; }
+
+    /* Services single col already, but tighten padding */
+    .service-card { padding: 1.5rem; }
+    .ideal-card { padding: 1.5rem; }
+  }
+
 </style>
 </head>
 <body>
@@ -491,7 +590,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button class="lang-btn active" onclick="setLang('it')">IT</button>
     <button class="lang-btn" onclick="setLang('en')">EN</button>
   </div>
+  <button class="nav-hamburger" id="navHamburger" aria-label="Apri menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE DRAWER -->
+<div class="nav-mobile-drawer" id="mobileDrawer" aria-hidden="true">
+  <a href="#servizi"   class="drawer-link">Servizi</a>
+  <a href="#risultati" class="drawer-link">Risultati</a>
+  <a href="#about"     class="drawer-link">Chi sono</a>
+  <a href="#progetti"  class="drawer-link">Progetti</a>
+  <a href="#contatti"  class="drawer-cta">Parliamone</a>
+  <div class="drawer-lang">
+    <button class="lang-btn active" onclick="setLang('it');closeDrawer()">IT</button>
+    <button class="lang-btn"        onclick="setLang('en');closeDrawer()">EN</button>
+  </div>
+</div>
 
 <!-- HERO -->
 <section class="hero" id="top">
@@ -516,6 +631,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="hero-actions">
       <a href="#contatti" class="btn-primary" data-it="Prenota una call gratuita" data-en="Book a free call">Prenota una call gratuita</a>
       <a href="#risultati" class="btn-ghost" data-it="Guarda i risultati →" data-en="See the results →">Guarda i risultati →</a>
+    </div>
+    <!-- Stats visible only on mobile (desktop sees them in hero-image-side) -->
+    <div class="hero-stats-mobile">
+      <div class="hero-stat"><span class="hero-stat-num">20+</span><span class="hero-stat-label" data-it="anni di esperienza" data-en="years of experience">anni di esperienza</span></div>
+      <div class="hero-stat"><span class="hero-stat-num">+307%</span><span class="hero-stat-label" data-it="record CRM" data-en="CRM records">record CRM</span></div>
+      <div class="hero-stat"><span class="hero-stat-num">+19%</span><span class="hero-stat-label" data-it="e-commerce" data-en="e-commerce">e-commerce</span></div>
     </div>
   </div>
   <div class="hero-image-side" style="position:relative; align-items:flex-end;">
@@ -1055,6 +1176,44 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
     const r = hero.getBoundingClientRect();
     spot.style.left = (e.clientX - r.left) + 'px';
     spot.style.top  = (e.clientY - r.top)  + 'px';
+  });
+})();
+
+/* Hamburger menu */
+(function() {
+  const burger = document.getElementById('navHamburger');
+  const drawer = document.getElementById('mobileDrawer');
+  if (!burger || !drawer) return;
+
+  window.closeDrawer = function() {
+    burger.classList.remove('open');
+    burger.setAttribute('aria-expanded', 'false');
+    drawer.classList.remove('open');
+    drawer.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('body-lock');
+  };
+
+  burger.addEventListener('click', () => {
+    const isOpen = drawer.classList.contains('open');
+    if (isOpen) { closeDrawer(); return; }
+    burger.classList.add('open');
+    burger.setAttribute('aria-expanded', 'true');
+    drawer.classList.add('open');
+    drawer.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('body-lock');
+  });
+
+  drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', closeDrawer));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+})();
+
+/* Touch device guard — disable tilt and magnetic on touch screens */
+(function() {
+  if (!window.matchMedia('(hover: none)').matches) return;
+  /* on touch devices remove mousemove listeners by overriding the elements' style on touch */
+  document.querySelectorAll('.service-card, .result-card, .ideal-card').forEach(el => {
+    el.style.transform = '';
+    el.addEventListener('touchstart', () => { el.style.transform = ''; }, { passive: true });
   });
 })();
 
